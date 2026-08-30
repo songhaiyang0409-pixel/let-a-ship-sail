@@ -1,8 +1,54 @@
 # CODEX RELAY CUMULATIVE SOURCE PATCH
-# Base source commit: 4aa7fa2436f1d16f322d5e25a237e318e4c14211
-# Source: P-23 Outbound Patch Bridge Persistence Test 09
+# Session-start main SHA: 6ba72e4329ab1b5558edb5fed9e45c83c581347d
+# Source: P-25 North Atlantic Open-Sea Readability & Water Pass 10
+# Local result SHA: 52b778ded3406674937acea3506b001cd7f75e9b
+# Includes cumulative P-23 + P-25 text-only source changes
 # Apply from repository root with: git apply --check codex_relay/CODEX_RELAY_LATEST.patch && git apply codex_relay/CODEX_RELAY_LATEST.patch
+# PATCH IS COMPLETE AND MACHINE-RELAYABLE
 
+diff --git a/materials/water_test/regional_ocean/regional_ocean_b_plus_v3.gdshader b/materials/water_test/regional_ocean/regional_ocean_b_plus_v3.gdshader
+index e52aea3..a5dac67 100644
+--- a/materials/water_test/regional_ocean/regional_ocean_b_plus_v3.gdshader
++++ b/materials/water_test/regional_ocean/regional_ocean_b_plus_v3.gdshader
+@@ -283,13 +283,22 @@ void fragment() {
+ 
+ 	float distance_to_camera = distance(camera_position_world, surface_world_position);
+ 	float far_mix = smoothstep(30.0, 110.0, distance_to_camera);
+-	color = mix(color, atmospheric, far_mix * tuning.w * 0.18);
++	color = mix(color, atmospheric, far_mix * tuning.w * 0.24);
+ 
+ 	float ndotl = clamp(dot(normalize(wave_normal), normalize(vec3(0.35, 0.82, 0.22))), 0.0, 1.0);
+ 	color *= 0.95 + ndotl * 0.07;
+ 	float shape_breakup = sin(dot(surface_world_position.xz, vec2(0.74, -0.67)) * 0.067 - wave_time * 0.052 + 2.2);
+ 	float shaped = smoothstep(-0.9, 0.9, shape_breakup);
+ 	color = mix(color * (0.98 - surface.z * 0.015), color * (1.02 + surface.z * 0.08), shaped);
++	// Two quiet, long-scale responses keep the crossing leg readable without
++	// adding displacement that would diverge from the protected boat sampler.
++	// Their influence grows through the mid/far field, where the old surface
++	// tended to collapse into one dark value from the gameplay camera.
++	float long_swell = sin(dot(surface_world_position.xz, vec2(0.31, 0.95)) * 0.031 - wave_time * 0.021);
++	float cross_swell = sin(dot(surface_world_position.xz, vec2(-0.82, 0.57)) * 0.018 + wave_time * 0.013 + 1.7);
++	float broad_structure = smoothstep(-0.72, 0.86, long_swell * 0.68 + cross_swell * 0.32);
++	float structure_strength = (0.018 + far_mix * 0.040) * (0.55 + surface.z);
++	color = mix(color * (1.0 - structure_strength * 0.42), atmospheric, broad_structure * structure_strength);
+ 	color = apply_saturation(color, surface.x);
+ 
+ 	vec2 local = surface_world_position.xz - boat_position_world.xz;
+@@ -300,9 +309,11 @@ void fragment() {
+ 	color = mix(color, color * 0.88, contact * 0.06);
+ 	color += vec3(0.105, 0.16, 0.17) * bow_shape * 0.045 * smoothstep(0.0, 0.7, boat_speed);
+ 
+-	float fresnel = pow(1.0 - max(dot(normalize(NORMAL), normalize(VIEW)), 0.0), 4.0);
+-	vec3 sky_tint = vec3(0.45, 0.58, 0.64);
+-	color = mix(color, sky_tint, fresnel * surface.y * (1.0 - far_mix * 0.25));
++	float view_facing = max(dot(normalize(wave_normal), normalize(camera_position_world - surface_world_position)), 0.0);
++	float fresnel = pow(1.0 - view_facing, 3.2);
++	vec3 sky_tint = vec3(0.40, 0.53, 0.59);
++	float restrained_sky_response = fresnel * (surface.y * 1.35 + surface.w * 2.2) * (1.0 - far_mix * 0.12);
++	color = mix(color, sky_tint, clamp(restrained_sky_response, 0.0, 0.14));
+ 	color += vec3(0.035, 0.050, 0.048) * local_conditions.z * 0.10;
+ 	ALBEDO = max(color, vec3(0.0));
+ 	ROUGHNESS = 0.91;
 diff --git a/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd b/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd
 index 1434b37..cbc1822 100644
 --- a/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd
@@ -16,3 +62,57 @@ index 1434b37..cbc1822 100644
  	environment.fog_density = 0.00125
  	environment.fog_height = 10.0
  	environment.fog_height_density = 0.009
+diff --git a/scenes/water/regional_ocean/NorthAtlanticFaroe.tres b/scenes/water/regional_ocean/NorthAtlanticFaroe.tres
+index 9e74f1d..e7187ec 100644
+--- a/scenes/water/regional_ocean/NorthAtlanticFaroe.tres
++++ b/scenes/water/regional_ocean/NorthAtlanticFaroe.tres
+@@ -6,15 +6,14 @@
+ script = ExtResource("1_preset")
+ preset_id = "north_atlantic_faroe"
+ display_name = "North Atlantic / Faroe"
+-trough_color = Color(0.022, 0.100, 0.165, 1)
+-water_color = Color(0.050, 0.225, 0.310, 1)
+-crest_color = Color(0.125, 0.310, 0.355, 1)
+-atmospheric_color = Color(0.190, 0.300, 0.345, 1)
++trough_color = Color(0.026, 0.108, 0.172, 1)
++water_color = Color(0.056, 0.238, 0.320, 1)
++crest_color = Color(0.132, 0.322, 0.365, 1)
++atmospheric_color = Color(0.205, 0.318, 0.360, 1)
+ amplitude_multiplier = 0.92
+ secondary_strength = 0.78
+ surface_contrast = 0.34
+ saturation = 0.76
+-horizon_response = 0.22
+-specular_strength = 0.050
+-fresnel_strength = 0.017
+-
++horizon_response = 0.25
++specular_strength = 0.055
++fresnel_strength = 0.020
+diff --git a/scenes/water/regional_ocean/OpenOcean.tres b/scenes/water/regional_ocean/OpenOcean.tres
+index d3081ab..75dca3e 100644
+--- a/scenes/water/regional_ocean/OpenOcean.tres
++++ b/scenes/water/regional_ocean/OpenOcean.tres
+@@ -6,15 +6,14 @@
+ script = ExtResource("1_preset")
+ preset_id = "open_ocean"
+ display_name = "Open Ocean"
+-trough_color = Color(0.018, 0.090, 0.155, 1)
+-water_color = Color(0.045, 0.220, 0.325, 1)
+-crest_color = Color(0.110, 0.310, 0.380, 1)
+-atmospheric_color = Color(0.185, 0.290, 0.355, 1)
++trough_color = Color(0.023, 0.101, 0.166, 1)
++water_color = Color(0.052, 0.235, 0.335, 1)
++crest_color = Color(0.120, 0.325, 0.390, 1)
++atmospheric_color = Color(0.202, 0.312, 0.372, 1)
+ amplitude_multiplier = 1.0
+ secondary_strength = 1.0
+ surface_contrast = 0.42
+ saturation = 0.90
+-horizon_response = 0.18
+-specular_strength = 0.055
+-fresnel_strength = 0.018
+-
++horizon_response = 0.22
++specular_strength = 0.060
++fresnel_strength = 0.021
