@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/reference/SailingReferenceScene.tscn" id="1_reference"]
+[ext_resource type="Script" path="res://scenes/visual_slices/island_world_read_reset_03.gd" id="2_reset"]
+
+[node name="IslandWorldReadReset03" type="Node3D"]
+script = ExtResource("2_reset")
+
+[node name="SailingReferenceScene" parent="." instance=ExtResource("1_reference")]

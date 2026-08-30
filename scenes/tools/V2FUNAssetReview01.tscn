@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/tools/v2fun_asset_review_01.gd" id="1_review"]
+
+[node name="V2FUNAssetReview01" type="Node3D"]
+script = ExtResource("1_review")
+

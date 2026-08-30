@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/staging/port_b_arrival_integration_02/port_b_arrival_integration_02.gd" id="1_port"]
+[ext_resource type="PackedScene" path="res://scenes/reference/SailingReferenceScene.tscn" id="2_reference"]
+
+[node name="PortBArrivalIntegration02" type="Node3D"]
+script = ExtResource("1_port")
+
+[node name="CanonicalSailingReference" parent="." instance=ExtResource("2_reference")]

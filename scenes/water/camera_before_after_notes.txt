@@ -1,0 +1,18 @@
+PORT-TO-PORT FIX PASS 01 - CAMERA DIAGNOSIS
+
+Before
+- The isolated slice stored raw mouse orbit values and applied them directly to the desired camera heading.
+- Horizontal input used a different sensitivity from the approved Sea Trial camera.
+- Vertical input changed camera height only; it did not rotate the camera offset and target around the boat pivot.
+- Boat-follow smoothing and camera-look smoothing were separate from the approved behavior, so the same drag could feel different while the boat was moving.
+
+After
+- Copied the approved Sea Trial camera behavior into this isolated controller without changing the formal camera script.
+- Mouse relative input is applied once, without frame-delta multiplication.
+- Horizontal look uses 0.0045 radians per mouse pixel and wraps continuously.
+- Vertical look uses 0.0030 radians per mouse pixel and is clamped to -0.17..0.35 radians.
+- Look targets are smoothed at 7.0; camera follow is smoothed at 8.0; heading follow is smoothed at 1.65.
+- Camera position and target rotate together around the boat pivot, preserving the approved drag semantics.
+- R resets look targets to the default rear three-quarter camera and lets smoothing return the view.
+
+Formal Sea Trial camera: unchanged.

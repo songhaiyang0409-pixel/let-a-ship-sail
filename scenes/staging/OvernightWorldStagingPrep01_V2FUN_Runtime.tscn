@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/staging/overnight_world_staging_prep_01_v2fun_runtime.gd" id="1_runtime"]
+[ext_resource type="PackedScene" path="res://scenes/staging/OvernightWorldStagingPrep01.tscn" id="2_staging"]
+
+[node name="OvernightWorldStagingPrep01_V2FUN_Runtime" type="Node3D"]
+script = ExtResource("1_runtime")
+

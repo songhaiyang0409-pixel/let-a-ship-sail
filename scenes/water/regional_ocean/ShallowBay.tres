@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RegionalOceanPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/regional_ocean/regional_ocean_preset.gd" id="1_preset"]
+
+[resource]
+script = ExtResource("1_preset")
+preset_id = "shallow_bay"
+display_name = "Shallow Bay"
+trough_color = Color(0.038, 0.135, 0.195, 1)
+water_color = Color(0.075, 0.300, 0.365, 1)
+crest_color = Color(0.160, 0.370, 0.400, 1)
+atmospheric_color = Color(0.245, 0.355, 0.395, 1)
+amplitude_multiplier = 0.64
+secondary_strength = 0.42
+surface_contrast = 0.22
+saturation = 0.84
+horizon_response = 0.28
+specular_strength = 0.040
+fresnel_strength = 0.015
+

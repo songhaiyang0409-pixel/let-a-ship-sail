@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RegionalOceanPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/regional_ocean/regional_ocean_preset.gd" id="1_preset"]
+
+[resource]
+script = ExtResource("1_preset")
+preset_id = "open_ocean"
+display_name = "Open Ocean"
+trough_color = Color(0.018, 0.090, 0.155, 1)
+water_color = Color(0.045, 0.220, 0.325, 1)
+crest_color = Color(0.110, 0.310, 0.380, 1)
+atmospheric_color = Color(0.185, 0.290, 0.355, 1)
+amplitude_multiplier = 1.0
+secondary_strength = 1.0
+surface_contrast = 0.42
+saturation = 0.90
+horizon_response = 0.18
+specular_strength = 0.055
+fresnel_strength = 0.018
+

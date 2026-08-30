@@ -1,0 +1,7 @@
+interface:
+  display_name: "Graphic Sailing Art Director"
+  short_description: "Sailing game art direction and screenshot QA"
+  brand_color: "#1D78B8"
+  default_prompt: "Use $graphic-sailing-art-director to review this sailing prototype screenshot against the project's visual QA checklist."
+policy:
+  allow_implicit_invocation: true

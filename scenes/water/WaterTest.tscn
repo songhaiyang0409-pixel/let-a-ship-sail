@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/water_test.gd" id="1_test"]
+[ext_resource type="Script" path="res://addons/boujie_water_shader/prefabs/ocean_prefab.gd" id="2_ocean"]
+[ext_resource type="Material" path="res://addons/boujie_water_shader/prefabs/outset_ocean_material.tres" id="3_material"]
+[ext_resource type="Script" path="res://addons/boujie_water_shader/types/camera_follower_3d.gd" id="4_follower"]
+[ext_resource type="Script" path="res://addons/boujie_water_shader/types/water_material_designer.gd" id="5_designer"]
+[ext_resource type="Environment" path="res://scenes/water/water_test_environment.tres" id="6_environment"]
+
+[node name="WaterTest" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("6_environment")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48.0, -28.0, 0.0)
+light_color = Color(1, 0.95, 0.84, 1)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="OceanPrefab" type="Node3D" parent="."]
+script = ExtResource("2_ocean")
+material = ExtResource("3_material")
+outermost_resolution = 10
+levels_of_detail = 2
+unit_size = 2.0
+far_edge = 120.0
+
+[node name="CameraFollower3D" type="Node3D" parent="."]
+script = ExtResource("4_follower")
+target_path = NodePath("../OceanPrefab")
+follow_axes = 5
+snap = true
+snap_unit = 8.0
+
+[node name="WaterMaterialDesigner" type="Node" parent="."]
+script = ExtResource("5_designer")
+material = ExtResource("3_material")
+update_on_ready = true
+update_when_camera_far_changes = true
+ocean_path = NodePath("../OceanPrefab")
+camera_follower_path = NodePath("../CameraFollower3D")
+distance_fade_far = 120.0
+wave_fade_far = 48.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0.0, 12.0, 18.0)
+current = true
+fov = 48.0
+far = 130.0

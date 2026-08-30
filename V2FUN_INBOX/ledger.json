@@ -1,0 +1,154 @@
+[
+  {
+    "original_filename": "Faroe_Turf_Roof_Cottage__V2FUN.glb",
+    "source": "V2FUN",
+    "date_processed_utc": "2026-08-28T16:09:40+00:00",
+    "sha256": "7e3dd2eee6cfeff77280383406cf98a75078967c625e9bcc56f80d75a03af2e6",
+    "original_path": "V2FUN_INBOX/originals/Faroe_Turf_Roof_Cottage__V2FUN__7e3dd2ee.glb",
+    "derivative_path": "V2FUN_INBOX/working/Faroe_Turf_Roof_Cottage__V2FUN__7e3dd2ee.glb",
+    "report_path": "V2FUN_INBOX/reports/Faroe_Turf_Roof_Cottage__V2FUN__7e3dd2ee.md",
+    "original_statistics": {
+      "mesh_count": 1,
+      "primitive_count": 1,
+      "vertex_count": 294918,
+      "triangle_count": 498550,
+      "polygon_count": 498550,
+      "material_count": 1,
+      "texture_count": 2,
+      "image_count": 2,
+      "texture_resolutions": [
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        },
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        }
+      ],
+      "animation_count": 0,
+      "skeleton_count": 0,
+      "missing_external_textures": [],
+      "inspection_note": "GLB/glTF JSON and accessors inspected with the local standard-library parser."
+    },
+    "derivative_statistics": {
+      "mesh_count": 1,
+      "primitive_count": 1,
+      "vertex_count": 294918,
+      "triangle_count": 498550,
+      "polygon_count": 498550,
+      "material_count": 1,
+      "texture_count": 2,
+      "image_count": 2,
+      "texture_resolutions": [
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        },
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        }
+      ],
+      "animation_count": 0,
+      "skeleton_count": 0,
+      "missing_external_textures": [],
+      "inspection_note": "GLB/glTF JSON and accessors inspected with the local standard-library parser."
+    },
+    "optimization_performed": "none; pass-through derivative",
+    "godot_asset_path": "V2FUN_INBOX/working/Faroe_Turf_Roof_Cottage__V2FUN__7e3dd2ee.glb",
+    "technical_classification": "B",
+    "notes": [
+      "very high triangle count; mobile optimization required",
+      "texture larger than 2048px"
+    ]
+  },
+  {
+    "original_filename": "Harbor_Fishing_Shed__V2FUN.glb",
+    "source": "V2FUN",
+    "date_processed_utc": "2026-08-28T16:09:40+00:00",
+    "sha256": "68c336dd4ae69dd88af41d0be26dce6a5e40df473f6e0ae80d8a07fb635228b6",
+    "original_path": "V2FUN_INBOX/originals/Harbor_Fishing_Shed__V2FUN__68c336dd.glb",
+    "derivative_path": "V2FUN_INBOX/working/Harbor_Fishing_Shed__V2FUN__68c336dd.glb",
+    "report_path": "V2FUN_INBOX/reports/Harbor_Fishing_Shed__V2FUN__68c336dd.md",
+    "original_statistics": {
+      "mesh_count": 1,
+      "primitive_count": 1,
+      "vertex_count": 292659,
+      "triangle_count": 494994,
+      "polygon_count": 494994,
+      "material_count": 1,
+      "texture_count": 2,
+      "image_count": 2,
+      "texture_resolutions": [
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        },
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        }
+      ],
+      "animation_count": 0,
+      "skeleton_count": 0,
+      "missing_external_textures": [],
+      "inspection_note": "GLB/glTF JSON and accessors inspected with the local standard-library parser."
+    },
+    "derivative_statistics": {
+      "mesh_count": 1,
+      "primitive_count": 1,
+      "vertex_count": 292659,
+      "triangle_count": 494994,
+      "polygon_count": 494994,
+      "material_count": 1,
+      "texture_count": 2,
+      "image_count": 2,
+      "texture_resolutions": [
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        },
+        {
+          "name": "embedded-image",
+          "resolution": [
+            8192,
+            8192
+          ]
+        }
+      ],
+      "animation_count": 0,
+      "skeleton_count": 0,
+      "missing_external_textures": [],
+      "inspection_note": "GLB/glTF JSON and accessors inspected with the local standard-library parser."
+    },
+    "optimization_performed": "none; pass-through derivative",
+    "godot_asset_path": "V2FUN_INBOX/working/Harbor_Fishing_Shed__V2FUN__68c336dd.glb",
+    "technical_classification": "B",
+    "notes": [
+      "very high triangle count; mobile optimization required",
+      "texture larger than 2048px"
+    ]
+  }
+]

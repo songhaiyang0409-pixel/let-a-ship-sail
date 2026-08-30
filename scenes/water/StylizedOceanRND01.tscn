@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/stylized_ocean_rnd_01.gd" id="1_ocean_rnd"]
+
+[node name="StylizedOceanRND01" type="Node3D"]
+script = ExtResource("1_ocean_rnd")

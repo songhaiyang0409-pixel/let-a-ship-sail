@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[node name="HarborRoot" type="Node3D"]
+metadata/asset_status = "PLACEHOLDER_CONTAINER"
+metadata/replacement_boundary = "Harbor visuals and props stay separate from sailing control."
+
+[node name="DockRoot" type="Node3D" parent="."]
+metadata/replacement_role = "Dock and pier visual sub-scenes."
+
+[node name="BuildingRoot" type="Node3D" parent="."]
+metadata/replacement_role = "Building visual sub-scenes."
+
+[node name="LandmarkRoot" type="Node3D" parent="."]
+metadata/replacement_role = "Harbor landmarks such as lighthouse."
+
+[node name="PropRoot" type="Node3D" parent="."]
+metadata/replacement_role = "Optional harbor props."

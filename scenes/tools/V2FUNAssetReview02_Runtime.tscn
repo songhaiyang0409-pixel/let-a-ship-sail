@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/tools/v2fun_asset_review_02_runtime.gd" id="1_runtime"]
+
+[node name="V2FUNAssetReview02Runtime" type="Node3D"]
+script = ExtResource("1_runtime")
+

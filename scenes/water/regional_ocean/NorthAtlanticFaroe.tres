@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RegionalOceanPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/regional_ocean/regional_ocean_preset.gd" id="1_preset"]
+
+[resource]
+script = ExtResource("1_preset")
+preset_id = "north_atlantic_faroe"
+display_name = "North Atlantic / Faroe"
+trough_color = Color(0.022, 0.100, 0.165, 1)
+water_color = Color(0.050, 0.225, 0.310, 1)
+crest_color = Color(0.125, 0.310, 0.355, 1)
+atmospheric_color = Color(0.190, 0.300, 0.345, 1)
+amplitude_multiplier = 0.92
+secondary_strength = 0.78
+surface_contrast = 0.34
+saturation = 0.76
+horizon_response = 0.22
+specular_strength = 0.050
+fresnel_strength = 0.017
+

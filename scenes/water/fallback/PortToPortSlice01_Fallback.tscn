@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/fallback/port_to_port_slice_01_fallback.gd" id="1_port_to_port_slice_01"]
+
+[node name="PortToPortSlice01" type="Node3D"]
+script = ExtResource("1_port_to_port_slice_01")

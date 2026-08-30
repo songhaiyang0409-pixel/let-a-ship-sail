@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[node name="IslandRoot" type="Node3D"]
+metadata/asset_status = "PLACEHOLDER_CONTAINER"
+metadata/replacement_boundary = "Replace VisualRoot contents; keep CollisionRoot contract."
+
+[node name="VisualRoot" type="Node3D" parent="."]
+metadata/asset_status = "VISUAL_ONLY"
+metadata/replacement_role = "Imported island GLB goes here."
+
+[node name="CollisionRoot" type="Node3D" parent="."]
+metadata/asset_status = "SIMPLIFIED_COLLISION_PROXY"
+metadata/replacement_role = "Keep low-cost collision proxy independent from VisualRoot."
+
+[node name="LandmarkRoot" type="Node3D" parent="."]
+metadata/asset_status = "OPTIONAL_LANDMARKS"
+
+[node name="PropRoot" type="Node3D" parent="."]
+metadata/asset_status = "OPTIONAL_PROPS"

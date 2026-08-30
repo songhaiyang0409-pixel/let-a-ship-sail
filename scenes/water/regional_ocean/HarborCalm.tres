@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RegionalOceanPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/regional_ocean/regional_ocean_preset.gd" id="1_preset"]
+
+[resource]
+script = ExtResource("1_preset")
+preset_id = "harbor_calm"
+display_name = "Harbor Calm"
+trough_color = Color(0.030, 0.115, 0.180, 1)
+water_color = Color(0.060, 0.270, 0.360, 1)
+crest_color = Color(0.135, 0.345, 0.390, 1)
+atmospheric_color = Color(0.230, 0.335, 0.385, 1)
+amplitude_multiplier = 0.72
+secondary_strength = 0.55
+surface_contrast = 0.26
+saturation = 0.82
+horizon_response = 0.24
+specular_strength = 0.045
+fresnel_strength = 0.016
+

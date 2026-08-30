@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/water/robin_hoods_bay_island_blockout_01.gd" id="1_robin_hoods_bay_blockout"]
+
+[node name="RobinHoodsBayIslandBlockout01" type="Node3D"]
+script = ExtResource("1_robin_hoods_bay_blockout")

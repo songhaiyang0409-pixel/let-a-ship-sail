@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/tools/v2fun_asset_inbox_gallery.gd" id="1_gallery"]
+
+[node name="V2FUNAssetInboxGallery" type="Node3D"]
+script = ExtResource("1_gallery")

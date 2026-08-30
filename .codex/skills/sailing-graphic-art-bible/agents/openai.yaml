@@ -1,0 +1,8 @@
+interface:
+  display_name: "Sailing Graphic Art Bible"
+  short_description: "Approved sailing art rules and visual QA"
+  brand_color: "#2E7890"
+  default_prompt: "Use $sailing-graphic-art-bible to review this sailing game's visual change against the approved art rules and screenshot QA workflow."
+policy:
+  allow_implicit_invocation: true
+

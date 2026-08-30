@@ -1,0 +1,31 @@
+# Godot generated/imported state
+.godot/
+*.import
+
+# Local engine/toolchain binaries and generated Python bytecode
+tools/Godot/
+tools/__pycache__/
+export_templates/
+
+# Local runtime captures and logs
+**/*_captures/
+**/captures/
+**/runtime_logs/
+*.log
+
+# Temporary/editor/OS files
+*.tmp
+*.temp
+*.bak
+*.swp
+Thumbs.db
+Desktop.ini
+
+# Local secrets/config overrides
+.env
+.env.*
+!.env.example
+credentials.*
+secrets.*
+*secret*.json
+*credentials*.json

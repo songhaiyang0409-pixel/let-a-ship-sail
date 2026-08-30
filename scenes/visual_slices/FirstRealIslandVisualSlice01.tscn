@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/reference/SailingReferenceScene.tscn" id="1_reference"]
+[ext_resource type="Script" path="res://scenes/visual_slices/first_real_island_visual_slice_01.gd" id="2_slice"]
+
+[node name="FirstRealIslandVisualSlice01" type="Node3D"]
+script = ExtResource("2_slice")
+
+[node name="SailingReferenceScene" parent="." instance=ExtResource("1_reference")]
+
+[node name="IslandVisualRoot" type="Node3D" parent="."]
+meta/asset_status = "APPROVED_SLICE_VISUAL_LAYER_WITH_PLACEHOLDER_LAND_MASS"
+
+[node name="TerrainRoot" type="Node3D" parent="IslandVisualRoot"]
+
+[node name="RockRoot" type="Node3D" parent="IslandVisualRoot"]
+
+[node name="VegetationRoot" type="Node3D" parent="IslandVisualRoot"]
+
+[node name="HarborRoot" type="Node3D" parent="IslandVisualRoot"]
+
+[node name="LandmarkRoot" type="Node3D" parent="IslandVisualRoot"]
+
+[node name="FutureBuildingLocations" type="Node3D" parent="IslandVisualRoot"]
+meta/purpose = "Reserved positions only; no production buildings in this slice"
+
+[node name="CollisionRoot" type="Node3D" parent="."]
+meta/purpose = "Existing RegionalOceanSystem coastal proxy remains the temporary navigation collision authority"
+meta/asset_status = "PLACEHOLDER_COLLISION_AUTHORITY"
