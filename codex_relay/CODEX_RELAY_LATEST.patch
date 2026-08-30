@@ -1,0 +1,18 @@
+# CODEX RELAY CUMULATIVE SOURCE PATCH
+# Base source commit: 4aa7fa2436f1d16f322d5e25a237e318e4c14211
+# Source: P-23 Outbound Patch Bridge Persistence Test 09
+# Apply from repository root with: git apply --check codex_relay/CODEX_RELAY_LATEST.patch && git apply codex_relay/CODEX_RELAY_LATEST.patch
+
+diff --git a/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd b/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd
+index 1434b37..cbc1822 100644
+--- a/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd
++++ b/scenes/staging/crossing_atmosphere_harbor_approach_pass_04/crossing_atmosphere_harbor_approach_pass_04.gd
+@@ -160,7 +160,7 @@ func _build_environment(root: Node3D) -> void:
+ 	environment.ambient_light_energy = 0.8
+ 	environment.fog_enabled = true
+ 	environment.fog_light_color = Color(0.54, 0.63, 0.66, 1.0)
+-	environment.fog_light_energy = 0.45
++	environment.fog_light_energy = 0.48
+ 	environment.fog_density = 0.00125
+ 	environment.fog_height = 10.0
+ 	environment.fog_height_density = 0.009
