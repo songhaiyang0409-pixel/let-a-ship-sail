@@ -1,8 +1,8 @@
 # CODEX RELAY CUMULATIVE SOURCE PATCH
-# Session-start main SHA: f6ebec3b2f018ea6e330359d66073fcdc871d91c
-# Source: P-26 Port B Coastline & Harbor Grounding Pass 11
-# Local result SHA: 6a5e0235be446e562649d6ae335e685aa6097b4f
-# Includes cumulative P-23 + P-25 + P-26 text-only source changes
+# Session-start main SHA: ca8072bc53e3fa282bd2e803ef57d1f84ed62297
+# Source: P-27 Port B Arrival, Docking & Recovery Polish Pass 12
+# Local result SHA: ba0e9f82d2ffa26f76a317d2a73e8f2b8c504f62
+# Includes cumulative P-23 + P-25 + P-26 + P-27 text-only source changes
 # Apply from repository root with: git apply --check codex_relay/CODEX_RELAY_LATEST.patch && git apply codex_relay/CODEX_RELAY_LATEST.patch
 # PATCH IS COMPLETE AND MACHINE-RELAYABLE
 
@@ -62,6 +62,78 @@ index 1434b37..cbc1822 100644
  	environment.fog_density = 0.00125
  	environment.fog_height = 10.0
  	environment.fog_height_density = 0.009
+diff --git a/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd b/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd
+index 8c7a8c9..3288931 100644
+--- a/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd
++++ b/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd
+@@ -175,6 +175,7 @@ func _build_destination_b() -> void:
+ 	_add_lighthouse(root, "B_HarborLandmark", Vector3(-29.0, 9.0, -223.0))
+ 	_add_cargo(root, "B_CargoStaging", Vector3(11.0, 1.0, -190.0))
+ 	_add_shore(root, "B_InnerQuay", Vector3(10.5, 0.62, -201.0), Vector3(18.0, 0.42, 3.2), Color(0.25, 0.22, 0.18, 1.0))
++	_add_berth_furniture(root)
+ 	_add_house(root, "B_NetLoft", Vector3(18.0, 3.0, -205.0), 4.5, 3.2, Color(0.52, 0.28, 0.20, 1.0), Color(0.18, 0.20, 0.20, 1.0))
+ 	_add_collision("B_LeftLandCollision", Vector3(58.0, 24.0, 45.0), Vector3(-48.0, 10.0, -199.0))
+ 	_add_collision("B_RightLandCollision", Vector3(56.0, 22.0, 44.0), Vector3(48.0, 9.0, -199.0))
+@@ -534,6 +535,36 @@ func _add_cargo(parent: Node3D, node_name: String, position: Vector3) -> void:
+ 	parent.add_child(cargo)
+ 
+ 
++func _add_berth_furniture(parent: Node3D) -> void:
++	# Quiet working details make the usable quay face and its longitudinal
++	# orientation legible. These remain visual-only so harbor clearance is unchanged.
++	var root := Node3D.new()
++	root.name = "B_BerthFurniture_VISUAL_ONLY"
++	root.set_meta("collision_policy", "visual only")
++	parent.add_child(root)
++	for index in range(3):
++		var bollard := MeshInstance3D.new()
++		bollard.name = "MooringBollard_%02d" % (index + 1)
++		var bollard_mesh := CylinderMesh.new()
++		bollard_mesh.top_radius = 0.18
++		bollard_mesh.bottom_radius = 0.22
++		bollard_mesh.height = 0.55
++		bollard_mesh.radial_segments = 8
++		bollard.mesh = bollard_mesh
++		bollard.position = Vector3(4.0 + float(index) * 5.2, 1.10, -200.0)
++		bollard.material_override = _material(Color(0.16, 0.18, 0.18, 1.0))
++		root.add_child(bollard)
++	for index in range(4):
++		var fender := MeshInstance3D.new()
++		fender.name = "QuayFender_%02d" % (index + 1)
++		var fender_mesh := BoxMesh.new()
++		fender_mesh.size = Vector3(0.32, 0.85, 0.24)
++		fender.mesh = fender_mesh
++		fender.position = Vector3(3.0 + float(index) * 5.0, 0.58, -199.28)
++		fender.material_override = _material(Color(0.12, 0.15, 0.15, 1.0))
++		root.add_child(fender)
++
++
+ func _add_collision(node_name: String, size: Vector3, position: Vector3) -> void:
+ 	var body := StaticBody3D.new()
+ 	body.name = node_name
+@@ -600,11 +631,14 @@ func _add_daymark(parent: Node3D, node_name: String, position: Vector3, color: C
+ 
+ 
+ func _update_arrival_feedback(position: Vector3) -> void:
+-	var in_berth := position.z < -190.0 and position.z > -208.0 and position.x > 4.0 and position.x < 20.0
++	# Keep recognition wholly inside the known navigable channel, with a short
++	# run-out beyond the quay so a modest overshoot can still be recognized.
++	var in_berth := position.z <= -190.0 and position.z >= -216.0 and position.x >= 4.0 and position.x <= 16.0
+ 	if in_berth:
+-		# A gentle berth assist prevents overshooting without changing steering or controls.
++		# Assist forward approaches only; reverse remains immediately available for recovery.
+ 		var speed := float(ocean.get("boat_speed"))
+-		ocean.set("boat_speed", move_toward(speed, 0.0, 0.035))
++		if speed > 0.0:
++			ocean.set("boat_speed", move_toward(speed, 0.0, 0.035))
+ 	if in_berth == arrival_state:
+ 		return
+ 	arrival_state = in_berth
+@@ -681,4 +715,3 @@ func _capture_sequence() -> void:
+ func _settle(count: int) -> void:
+ 	for _frame in range(count):
+ 		await get_tree().process_frame
+-
 diff --git a/scenes/staging/terra_playable_north_atlantic_showcase_slice_01/terra_playable_north_atlantic_showcase_slice_01.gd b/scenes/staging/terra_playable_north_atlantic_showcase_slice_01/terra_playable_north_atlantic_showcase_slice_01.gd
 index c4b0617..b8d2972 100644
 --- a/scenes/staging/terra_playable_north_atlantic_showcase_slice_01/terra_playable_north_atlantic_showcase_slice_01.gd
@@ -188,3 +260,37 @@ index d3081ab..75dca3e 100644
 +horizon_response = 0.22
 +specular_strength = 0.060
 +fresnel_strength = 0.021
+diff --git a/tests/reconstruction_04_journey_check.gd b/tests/reconstruction_04_journey_check.gd
+index 36f8de7..0612276 100644
+--- a/tests/reconstruction_04_journey_check.gd
++++ b/tests/reconstruction_04_journey_check.gd
+@@ -17,13 +17,28 @@ func _run() -> void:
+ 	for marker in ["B_OuterPortDaymark", "B_OuterStarboardDaymark", "B_InnerTurnDaymark", "B_BerthDaymark"]:
+ 		assert(port.get_node_or_null(marker) != null, "Missing physical navigation mark: " + marker)
+ 	assert(port.get_node_or_null("B_InnerQuay_PROXY") != null, "Inner quay must communicate the working berth")
++	var furniture := port.get_node_or_null("B_BerthFurniture_VISUAL_ONLY")
++	assert(furniture != null and furniture.get_child_count() == 7, "Visual-only berth furniture must orient the quay")
++	assert(world.get_node_or_null("NorthAtlanticPlayableWorld01_ISOLATED/WorldCollisionRoot_SIMPLE_PROXY/B_BerthFurniture_VISUAL_ONLY") == null, "Berth furniture must not alter collision")
++	for approach in [Vector3(0.0, 0.28, -170.0), Vector3(-10.0, 0.28, -170.0), Vector3(10.0, 0.28, -170.0), Vector3(0.0, 0.28, -189.0), Vector3(0.0, 0.28, -205.0)]:
++		assert(not bool(world.call("_land_mask", approach)), "Intended approach must remain navigable: " + str(approach))
++	assert(bool(world.call("_land_mask", Vector3(24.0, 0.28, -190.0))), "Excessive-lateral unsafe approach must remain rejected")
+ 	var ocean = world.get("ocean")
+ 	assert(ocean != null, "Protected regional ocean must be present")
+ 	ocean.set("boat_speed", 2.0)
+ 	world.call("_update_arrival_feedback", Vector3(11.0, 0.28, -195.0))
+ 	assert(world.get("arrival_state") == true, "Berth should enter arrival state")
+ 	assert(float(ocean.get("boat_speed")) < 2.0, "Berth assist should gently reduce speed")
++	ocean.set("boat_speed", -0.8)
++	world.call("_update_arrival_feedback", Vector3(11.0, 0.28, -211.0))
++	assert(is_equal_approx(float(ocean.get("boat_speed")), -0.8), "Reverse recovery must remain under free-drive control")
++	world.call("_update_arrival_feedback", Vector3(11.0, 0.28, -216.0))
++	assert(world.get("arrival_state") == true, "Minor berth overshoot should retain arrival recognition")
++	world.call("_update_arrival_feedback", Vector3(11.0, 0.28, -218.0))
++	assert(world.get("arrival_state") == false, "Leaving the run-out should clear arrival for recovery")
++	ocean.set("boat_speed", 0.6)
+ 	world.call("_update_arrival_feedback", Vector3(0.0, 0.28, -180.0))
+ 	assert(world.get("arrival_state") == false, "Leaving berth should clear arrival state")
+-	print("RECONSTRUCTION_04_JOURNEY_CHECK_OK|daymarks=4|dogleg=true|arrival_assist=true")
++	assert(is_equal_approx(float(ocean.get("boat_speed")), 0.6), "Free drive must remain available outside the berth")
++	print("RECONSTRUCTION_04_JOURNEY_CHECK_OK|daymarks=4|dogleg=true|arrival_assist=true|overshoot_recovery=true|free_drive=true")
+ 	quit(0)
