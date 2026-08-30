@@ -1,8 +1,10 @@
 # CODEX RELAY CUMULATIVE SOURCE PATCH
-# Session-start main SHA: 1ad49c57a48f0e6e9080116f1df63131ab2d7232
-# Source: P-28 Port A Departure & Open-Sea Transition Polish Pass 13
-# Local result SHA: 473b6363340c01c4f30f9d6f519f39e6c34600aa
-# Includes cumulative P-23 + P-25 + P-26 + P-27 + P-28 text-only source changes
+# Session-start main SHA: ea9f7ed31f70a236e13417830fa3d66d35074210
+# Source: P-29 Authoritative A→B Playable Journey Consolidation Pass 14
+# Local result SHA: 17678157b458872b3727fbaf781c9f075e3ffd7d
+# Includes cumulative P-23 + P-25 + P-26 + P-27 + P-28 + P-29 text-only source changes
+# Authoritative scene: res://scenes/staging/reconstruction_04/NorthAtlanticWorldReconstruction04.tscn
+# Launch: godot --path . scenes/staging/reconstruction_04/NorthAtlanticWorldReconstruction04.tscn
 # Apply from repository root with: git apply --check codex_relay/CODEX_RELAY_LATEST.patch && git apply codex_relay/CODEX_RELAY_LATEST.patch
 # PATCH IS COMPLETE AND MACHINE-RELAYABLE
 
@@ -63,10 +65,36 @@ index 1434b37..cbc1822 100644
  	environment.fog_height = 10.0
  	environment.fog_height_density = 0.009
 diff --git a/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd b/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd
-index 8c7a8c9..00df24a 100644
+index 8c7a8c9..b989741 100644
 --- a/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd
 +++ b/scenes/staging/reconstruction_04/north_atlantic_world_reconstruction_04.gd
-@@ -154,6 +154,7 @@ func _build_destination_a() -> void:
+@@ -1,6 +1,7 @@
+ extends Node3D
+ 
+-## Overnight playable world: isolated A -> B production slice.
++## Authoritative cumulative P-23/P-25/P-26/P-27/P-28/P-29 playable A -> B journey.
++## Launch: godot --path . scenes/staging/reconstruction_04/NorthAtlanticWorldReconstruction04.tscn
+ ## Reuses RegionalOceanSystem for all sailing, camera, B+ V3 waves, coupling,
+ ## and wake. This script only builds the temporary world around that system.
+ 
+@@ -50,7 +51,7 @@ func _ready() -> void:
+ 	_mount_v2fun_assets()
+ 	ocean.call("_set_boat_pose", Vector3(0.0, 0.28, START_Z), 0.0, 0.0)
+ 	last_safe_position = _boat_position()
+-	print("NORTH_ATLANTIC_RECONSTRUCTION_04_READY|route_m=%d|normal_seconds=%.1f|test_seconds=%.1f|v2fun_scale=%.1f|formal_project_modified=false" % [ROUTE_M, ROUTE_M / NORMAL_SPEED, ROUTE_M / TEST_SPEED, BUILDING_SCALE])
++	print("AUTHORITATIVE_A_TO_B_JOURNEY_READY|scene=res://scenes/staging/reconstruction_04/NorthAtlanticWorldReconstruction04.tscn|route_m=%d|normal_seconds=%.1f|test_seconds=%.1f|v2fun_scale=%.1f|formal_project_modified=false" % [ROUTE_M, ROUTE_M / NORMAL_SPEED, ROUTE_M / TEST_SPEED, BUILDING_SCALE])
+ 	if capture_mode:
+ 		ocean.set("interactive_mode", false)
+ 		ocean.set("capture_mode", false)
+@@ -105,6 +106,7 @@ func _build_world() -> void:
+ 	root.set_meta("asset_status", "NORTH_ATLANTIC_RECONSTRUCTION_04")
+ 	root.set_meta("world_scale", "1 Godot unit approximately 1 meter")
+ 	root.set_meta("route_distance_m", ROUTE_M)
++	root.set_meta("authoritative_playable_journey", true)
+ 	add_child(root)
+ 	visual_root = Node3D.new()
+ 	visual_root.name = "WorldVisualRoot_REPLACEABLE"
+@@ -154,6 +156,7 @@ func _build_destination_a() -> void:
  	_add_path(root, "A_CottagePath", Vector3(-1.0, 0.60, 185.0), Vector3(-21.0, 6.0, 212.0), 1.7, Color(0.34, 0.32, 0.26, 1.0))
  	_add_lighthouse(root, "A_ExposedLandmark", Vector3(-55.0, 13.0, 223.0))
  	_add_rocks(root, "A_WindwardRocks", Vector3(3.0, 1.0, 197.0), 4)
@@ -74,7 +102,21 @@ index 8c7a8c9..00df24a 100644
  	_add_collision("A_LandCollision", Vector3(112.0, 28.0, 58.0), Vector3(0.0, 12.0, 215.0))
  
  
-@@ -175,6 +176,7 @@ func _build_destination_b() -> void:
+@@ -165,7 +168,13 @@ func _build_destination_b() -> void:
+ 	_add_landform(root, "B_WestHarborArm", -25.0, -177.0, -202.0, 7.0, 10.0, 4.2, 1.1, Color(0.29, 0.32, 0.32, 1.0), Color(0.25, 0.37, 0.27, 1.0))
+ 	_add_landform(root, "B_EastHarborArm", 25.0, -178.0, -202.0, 7.0, 10.0, 4.0, 2.7, Color(0.28, 0.31, 0.31, 1.0), Color(0.24, 0.36, 0.26, 1.0))
+ 	_add_landform(root, "B_HarborWorkingBank", 5.0, -181.0, -206.0, 8.5, 11.0, 2.5, 1.7, Color(0.30, 0.32, 0.31, 1.0), Color(0.29, 0.34, 0.25, 1.0))
++	# P-26 grounding is consolidated here as visual-only water-contact geometry.
++	# It reinforces the existing protected dog-leg rather than changing collision.
++	_add_coast_foot(root, "B_WestHeadlandFoot", Vector3(-35.0, -0.42, -166.0), Vector3(26.0, 0.9, 17.0), -5.0)
++	_add_coast_foot(root, "B_EastHarborArmFoot", Vector3(27.0, -0.40, -177.0), Vector3(19.0, 0.8, 17.0), 8.0)
++	_add_harbor_bank(root, "B_WorkingShoreBank", Vector3(6.0, -0.18, -199.0), Vector3(26.0, 1.05, 9.0))
+ 	_add_shore(root, "B_WorkingHarborApron", Vector3(5.0, 0.48, -191.5), Vector3(15.0, 0.28, 5.2), Color(0.24, 0.22, 0.18, 1.0))
++	_add_slipway(root, "B_WorkingSlipway", Vector3(-7.0, 0.02, -196.0), Vector3(3.4, 0.32, 6.0))
+ 	_add_rock_shore(root, "B_ShelteredShore", Vector3(0.0, 0.20, -178.0), 36.0, 0.35, 1.6)
+ 	_add_rock_shore(root, "B_BreakwaterRocks", Vector3(24.0, 0.65, -184.0), 16.0, 0.6, 2.8)
+ 	_add_path(root, "B_DockToWarehousePath", Vector3(5.0, 0.65, -188.0), Vector3(5.0, 1.8, -198.0), 1.8, Color(0.35, 0.31, 0.25, 1.0))
+@@ -175,6 +184,7 @@ func _build_destination_b() -> void:
  	_add_lighthouse(root, "B_HarborLandmark", Vector3(-29.0, 9.0, -223.0))
  	_add_cargo(root, "B_CargoStaging", Vector3(11.0, 1.0, -190.0))
  	_add_shore(root, "B_InnerQuay", Vector3(10.5, 0.62, -201.0), Vector3(18.0, 0.42, 3.2), Color(0.25, 0.22, 0.18, 1.0))
@@ -82,7 +124,43 @@ index 8c7a8c9..00df24a 100644
  	_add_house(root, "B_NetLoft", Vector3(18.0, 3.0, -205.0), 4.5, 3.2, Color(0.52, 0.28, 0.20, 1.0), Color(0.18, 0.20, 0.20, 1.0))
  	_add_collision("B_LeftLandCollision", Vector3(58.0, 24.0, 45.0), Vector3(-48.0, 10.0, -199.0))
  	_add_collision("B_RightLandCollision", Vector3(56.0, 22.0, 44.0), Vector3(48.0, 9.0, -199.0))
-@@ -534,6 +536,52 @@ func _add_cargo(parent: Node3D, node_name: String, position: Vector3) -> void:
+@@ -523,6 +533,35 @@ func _add_shore(parent: Node3D, node_name: String, position: Vector3, size: Vect
+ 	parent.add_child(strip)
+ 
+ 
++func _add_harbor_bank(parent: Node3D, node_name: String, position: Vector3, size: Vector3) -> void:
++	var bank := MeshInstance3D.new()
++	bank.name = node_name + "_GROUNDED_EDGE"
++	bank.mesh = _wedge(size, size.y * 0.72, size.y)
++	bank.position = position
++	bank.rotation_degrees.y = -7.0
++	bank.material_override = _material(Color(0.24, 0.27, 0.26, 1.0))
++	parent.add_child(bank)
++
++
++func _add_coast_foot(parent: Node3D, node_name: String, position: Vector3, size: Vector3, yaw_degrees: float) -> void:
++	var foot := MeshInstance3D.new()
++	foot.name = node_name + "_WATER_CONTACT"
++	foot.mesh = _wedge(size, size.y * 0.55, size.y)
++	foot.position = position
++	foot.rotation_degrees.y = yaw_degrees
++	foot.material_override = _material(Color(0.18, 0.22, 0.23, 1.0))
++	parent.add_child(foot)
++
++
++func _add_slipway(parent: Node3D, node_name: String, position: Vector3, size: Vector3) -> void:
++	var slipway := MeshInstance3D.new()
++	slipway.name = node_name + "_PROXY"
++	slipway.mesh = _wedge(size, 0.06, 0.42)
++	slipway.position = position
++	slipway.material_override = _material(Color(0.31, 0.30, 0.27, 1.0))
++	parent.add_child(slipway)
++
++
+ func _add_cargo(parent: Node3D, node_name: String, position: Vector3) -> void:
+ 	var cargo := MeshInstance3D.new()
+ 	cargo.name = node_name + "_PROXY"
+@@ -534,6 +573,52 @@ func _add_cargo(parent: Node3D, node_name: String, position: Vector3) -> void:
  	parent.add_child(cargo)
  
  
@@ -135,7 +213,7 @@ index 8c7a8c9..00df24a 100644
  func _add_collision(node_name: String, size: Vector3, position: Vector3) -> void:
  	var body := StaticBody3D.new()
  	body.name = node_name
-@@ -600,11 +648,14 @@ func _add_daymark(parent: Node3D, node_name: String, position: Vector3, color: C
+@@ -600,11 +685,14 @@ func _add_daymark(parent: Node3D, node_name: String, position: Vector3, color: C
  
  
  func _update_arrival_feedback(position: Vector3) -> void:
@@ -153,7 +231,7 @@ index 8c7a8c9..00df24a 100644
  	if in_berth == arrival_state:
  		return
  	arrival_state = in_berth
-@@ -681,4 +732,3 @@ func _capture_sequence() -> void:
+@@ -681,4 +769,3 @@ func _capture_sequence() -> void:
  func _settle(count: int) -> void:
  	for _frame in range(count):
  		await get_tree().process_frame
@@ -285,13 +363,15 @@ index d3081ab..75dca3e 100644
 +specular_strength = 0.060
 +fresnel_strength = 0.021
 diff --git a/tests/reconstruction_04_journey_check.gd b/tests/reconstruction_04_journey_check.gd
-index 36f8de7..5637b56 100644
+index 36f8de7..f3dc5e0 100644
 --- a/tests/reconstruction_04_journey_check.gd
 +++ b/tests/reconstruction_04_journey_check.gd
-@@ -12,18 +12,45 @@ func _run() -> void:
+@@ -12,18 +12,50 @@ func _run() -> void:
  		await process_frame
  	var visual := world.get_node_or_null("NorthAtlanticPlayableWorld01_ISOLATED/WorldVisualRoot_REPLACEABLE")
  	assert(visual != null, "Replaceable visual root must exist")
++	var journey_root := world.get_node_or_null("NorthAtlanticPlayableWorld01_ISOLATED")
++	assert(journey_root != null and bool(journey_root.get_meta("authoritative_playable_journey", false)), "Reconstruction 04 must identify itself as the authoritative playable journey")
 +	var departure := visual.get_node_or_null("DestinationA_ExposedNorthernCoast/A_DepartureHarbor_VISUAL_ONLY")
 +	assert(departure != null, "Port A must have a grounded visual-only departure pocket")
 +	for cue in ["A_WestWorkingEdge_PROXY", "A_EastWorkingEdge_PROXY", "A_WorkingApron_PROXY", "A_ExitPortDaymark", "A_ExitStarboardDaymark"]:
@@ -299,6 +379,9 @@ index 36f8de7..5637b56 100644
 +	assert(world.get_node_or_null("NorthAtlanticPlayableWorld01_ISOLATED/WorldCollisionRoot_SIMPLE_PROXY/A_DepartureHarbor_VISUAL_ONLY") == null, "Port A departure cues must not alter collision")
  	var port := visual.get_node_or_null("DestinationB_ShelteredInhabitedCoast")
  	assert(port != null, "Destination B must exist")
++	for grounding in ["B_WestHeadlandFoot_WATER_CONTACT", "B_EastHarborArmFoot_WATER_CONTACT", "B_WorkingShoreBank_GROUNDED_EDGE", "B_WorkingSlipway_PROXY"]:
++		assert(port.get_node_or_null(grounding) != null, "Missing Port B grounded working-shore cue: " + grounding)
++		assert(world.get_node_or_null("NorthAtlanticPlayableWorld01_ISOLATED/WorldCollisionRoot_SIMPLE_PROXY/" + grounding) == null, "Port B grounding must remain visual-only: " + grounding)
  	for marker in ["B_OuterPortDaymark", "B_OuterStarboardDaymark", "B_InnerTurnDaymark", "B_BerthDaymark"]:
  		assert(port.get_node_or_null(marker) != null, "Missing physical navigation mark: " + marker)
  	assert(port.get_node_or_null("B_InnerQuay_PROXY") != null, "Inner quay must communicate the working berth")
@@ -333,5 +416,5 @@ index 36f8de7..5637b56 100644
  	assert(world.get("arrival_state") == false, "Leaving berth should clear arrival state")
 -	print("RECONSTRUCTION_04_JOURNEY_CHECK_OK|daymarks=4|dogleg=true|arrival_assist=true")
 +	assert(is_equal_approx(float(ocean.get("boat_speed")), 0.6), "Free drive must remain available outside the berth")
-+	print("RECONSTRUCTION_04_JOURNEY_CHECK_OK|departure_daymarks=2|departure_clearance=true|regional_progression=true|arrival_daymarks=4|dogleg=true|arrival_assist=true|overshoot_recovery=true|free_drive=true")
++	print("AUTHORITATIVE_A_TO_B_JOURNEY_CHECK_OK|departure_daymarks=2|departure_clearance=true|regional_progression=true|port_b_water_contact=true|working_shore=true|arrival_daymarks=4|dogleg=true|arrival_assist=true|overshoot_recovery=true|free_drive=true|visual_collision_separated=true")
  	quit(0)
