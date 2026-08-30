@@ -6,7 +6,7 @@ extends Node3D
 
 const VIEWPORT_SIZE := Vector2i(1152, 648)
 const CAPTURE_ROOT := "res://scenes/staging/terra_playable_north_atlantic_showcase_slice_01_captures"
-const START_Z := -120.0
+const START_Z := 150.0
 const END_Z := -193.0
 const ROUTE_M := START_Z - END_Z
 const NORMAL_SPEED := 2.2
@@ -90,12 +90,12 @@ func _configure_viewport() -> void:
 
 func _configure_route() -> void:
 	ocean.set("route_origin_z", -START_Z)
-	ocean.set("transition_01_start", 18.0)
-	ocean.set("transition_01_end", 28.0)
-	ocean.set("transition_12_start", 40.0)
-	ocean.set("transition_12_end", 50.0)
-	ocean.set("transition_23_start", 70.0)
-	ocean.set("transition_23_end", 80.0)
+	ocean.set("transition_01_start", 42.0)
+	ocean.set("transition_01_end", 72.0)
+	ocean.set("transition_12_start", 148.0)
+	ocean.set("transition_12_end", 188.0)
+	ocean.set("transition_23_start", 272.0)
+	ocean.set("transition_23_end", 302.0)
 	ocean.set("coastal_test_mode", false)
 	var water := ocean.get("water_mesh") as MeshInstance3D
 	if water != null:
@@ -108,9 +108,9 @@ func _configure_route() -> void:
 	var material := ocean.get("water_material") as ShaderMaterial
 	if material != null:
 		for item in [
-			["route_origin_z", -START_Z], ["transition_01_start", 18.0], ["transition_01_end", 28.0],
-			["transition_12_start", 40.0], ["transition_12_end", 50.0],
-			["transition_23_start", 70.0], ["transition_23_end", 80.0],
+			["route_origin_z", -START_Z], ["transition_01_start", 42.0], ["transition_01_end", 72.0],
+			["transition_12_start", 148.0], ["transition_12_end", 188.0],
+			["transition_23_start", 272.0], ["transition_23_end", 302.0],
 		]:
 			material.set_shader_parameter(String(item[0]), item[1])
 		material.set_shader_parameter("coastal_local_enabled", false)
@@ -145,6 +145,7 @@ func _build_world() -> void:
 	_build_environment(root)
 	_build_destination_a()
 	_build_distant_world_context()
+	_build_crossing_rhythm()
 	_build_destination_b()
 	_add_boundaries()
 
@@ -194,6 +195,39 @@ func _build_distant_world_context() -> void:
 	_add_landform(root, "FarEastIslandGroup", 105.0, -268.0, -338.0, 18.0, 31.0, 5.8, 3.4, Color(0.24, 0.28, 0.29, 1.0), Color(0.23, 0.32, 0.26, 1.0))
 	_add_rocks(root, "FarEastRocks", Vector3(77.0, 0.35, -245.0), 3)
 
+
+func _build_crossing_rhythm() -> void:
+	var root := _new_region("CrossingRhythm", "restrained near-mid-far framing outside the sailing lane")
+	root.set_meta("asset_status", "P17_STRUCTURAL_WORLD_PASS")
+	_add_landform(root, "A_WestCoastContinuation", -73.0, 92.0, 176.0, 16.0, 27.0, 10.0, 1.1, Color(0.19, 0.24, 0.26, 1.0), Color(0.16, 0.26, 0.22, 1.0))
+	_add_landform(root, "A_EastCoastContinuation", 75.0, 78.0, 178.0, 15.0, 28.0, 8.0, 3.0, Color(0.20, 0.25, 0.27, 1.0), Color(0.18, 0.28, 0.23, 1.0))
+	_add_skerry_chain(root, "WestDepartureSkerries", Vector3(-69.0, 0.0, 70.0), 4, 14.0, 0.3)
+	_add_skerry_chain(root, "EastMidCrossingSkerries", Vector3(72.0, 0.0, -22.0), 3, 16.0, 2.2)
+	_add_skerry_chain(root, "WestApproachSkerries", Vector3(-72.0, 0.0, -104.0), 4, 13.0, 4.1)
+	_add_landform(root, "B_FarWestReveal", -101.0, -116.0, -210.0, 14.0, 29.0, 7.0, 2.5, Color(0.22, 0.27, 0.29, 1.0), Color(0.20, 0.31, 0.25, 1.0))
+	_add_landform(root, "B_FarEastReveal", 103.0, -132.0, -222.0, 13.0, 27.0, 6.0, 4.2, Color(0.23, 0.28, 0.29, 1.0), Color(0.22, 0.32, 0.26, 1.0))
+
+
+func _add_skerry_chain(parent: Node3D, node_name: String, center: Vector3, count: int, spacing: float, phase: float) -> void:
+	var root := Node3D.new()
+	root.name = node_name + "_ASYMMETRIC_SILHOUETTE"
+	parent.add_child(root)
+	for index in range(count):
+		var t := float(index) - float(count - 1) * 0.5
+		var rock := MeshInstance3D.new()
+		rock.name = "Skerry_%02d" % index
+		var mesh := SphereMesh.new()
+		mesh.radius = 2.2 + float(index % 3) * 0.65
+		mesh.height = mesh.radius * 1.25
+		mesh.radial_segments = 7
+		mesh.rings = 3
+		rock.mesh = mesh
+		rock.position = center + Vector3(sin(phase + index * 1.7) * 5.0, 0.3, t * spacing)
+		rock.rotation_degrees.y = phase * 31.0 + index * 23.0
+		rock.scale = Vector3(1.45 + 0.18 * (index % 2), 0.42 + 0.08 * (index % 3), 0.78)
+		rock.material_override = _material(Color(0.24, 0.29, 0.30, 1.0))
+		root.add_child(rock)
+
 func _build_destination_b() -> void:
 	var root := _new_region("DestinationB_ShelteredInhabitedCoast", "sheltered inhabited coast and working harbor")
 	match layout_variant:
@@ -221,11 +255,16 @@ func _build_b_offset_inlet(root: Node3D) -> void:
 	_add_collision("B_A_RightLandCollision", Vector3(48.0, 22.0, 48.0), Vector3(52.0, 10.0, -207.0))
 	_add_collision("B_A_BackLandCollision", Vector3(72.0, 28.0, 24.0), Vector3(0.0, 14.0, -232.0))
 func _build_b_dogleg_cove(root: Node3D) -> void:
-	_add_landform(root, "B_B_WestDominantHeadland", -57.0, -153.0, -224.0, 31.0, 39.0, 18.0, 0.7, Color(0.24, 0.29, 0.30, 1.0), Color(0.22, 0.35, 0.26, 1.0))
+	# The outer mass reaches the mouth before folding back into a lower inner
+	# shoulder. From the gameplay camera this makes B a coast with a cut in it,
+	# rather than two unrelated islands flanking a dock.
+	_add_landform(root, "B_B_WestDominantHeadland", -57.0, -145.0, -224.0, 33.0, 39.0, 18.0, 0.7, Color(0.24, 0.29, 0.30, 1.0), Color(0.22, 0.35, 0.26, 1.0))
 	_add_landform(root, "B_B_EastOuterShoulder", 55.0, -190.0, -241.0, 19.0, 34.0, 11.0, 2.6, Color(0.25, 0.30, 0.31, 1.0), Color(0.25, 0.38, 0.28, 1.0))
 	_add_landform(root, "B_B_RearInhabitedSlope", 15.0, -212.0, -245.0, 15.0, 28.0, 15.0, 4.6, Color(0.26, 0.31, 0.30, 1.0), Color(0.27, 0.39, 0.25, 1.0))
 	_add_landform(root, "B_B_ContinuousRearCoast", 6.0, -219.0, -248.0, 36.0, 48.0, 18.0, 5.0, Color(0.25, 0.30, 0.30, 1.0), Color(0.26, 0.38, 0.25, 1.0))
+	_add_landform(root, "B_B_WestInnerShelter", -38.0, -174.0, -220.0, 13.0, 22.0, 8.5, 1.55, Color(0.25, 0.30, 0.30, 1.0), Color(0.23, 0.36, 0.26, 1.0))
 	_add_landform(root, "B_B_EastInnerArm", 22.0, -165.0, -205.0, 10.0, 14.0, 6.5, 2.1, Color(0.27, 0.31, 0.31, 1.0), Color(0.24, 0.37, 0.27, 1.0))
+	_add_harbor_bank(root, "B_B_WorkingShoreBank", Vector3(-15.0, -0.18, -204.0), Vector3(23.0, 1.05, 9.0))
 	_add_quay(root, "B_B_MainQuay", Vector3(-7.0, 0.28, -196.0), Vector3(7.0, 0.18, 1.8))
 	_add_slipway(root, "B_B_Slipway", Vector3(-16.0, 0.02, -197.0), Vector3(3.4, 0.32, 6.0))
 	_add_rock_shore(root, "B_B_InnerShore", Vector3(-3.0, 0.20, -181.0), 25.0, 0.34, 1.8)
@@ -236,10 +275,33 @@ func _build_b_dogleg_cove(root: Node3D) -> void:
 	_add_house(root, "B_B_WorkHouse", Vector3(-7.0, 0.55, -204.0), 4.8, 2.8, Color(0.25, 0.25, 0.23, 1.0), Color(0.16, 0.19, 0.19, 1.0))
 	_add_pier(root, "B_B_WorkingPier", Vector3(-8.0, 0.55, -192.0))
 	_add_lighthouse(root, "B_B_HeadlandLandmark", Vector3(-29.0, 12.0, -217.0))
+	_add_arrival_beacon(root, Vector3(-29.0, 18.5, -217.0))
 	_add_cargo(root, "B_B_WorkingGear", Vector3(-1.0, 1.0, -192.0))
+	_add_rock_shore(root, "B_B_WestTidalContact", Vector3(-27.0, -0.05, -180.0), 19.0, 0.28, 0.35)
 	_add_collision("B_B_WestLandCollision", Vector3(58.0, 26.0, 60.0), Vector3(-55.0, 12.0, -195.0))
 	_add_collision("B_B_EastLandCollision", Vector3(40.0, 22.0, 44.0), Vector3(55.0, 10.0, -216.0))
 	_add_collision("B_B_RearLandCollision", Vector3(68.0, 28.0, 25.0), Vector3(10.0, 14.0, -233.0))
+
+
+func _add_arrival_beacon(parent: Node3D, position: Vector3) -> void:
+	var beacon := MeshInstance3D.new()
+	beacon.name = "B_ArrivalBeacon_DIEGETIC"
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.28
+	mesh.height = 0.56
+	mesh.radial_segments = 8
+	mesh.rings = 4
+	beacon.mesh = mesh
+	beacon.position = position
+	beacon.material_override = _material(Color(0.94, 0.73, 0.39, 1.0))
+	parent.add_child(beacon)
+	var light := OmniLight3D.new()
+	light.name = "WarmHarborWelcomeLight"
+	light.position = position
+	light.light_color = Color(1.0, 0.72, 0.40, 1.0)
+	light.light_energy = 1.8
+	light.omni_range = 9.0
+	parent.add_child(light)
 func _build_b_asymmetric_headland(root: Node3D) -> void:
 	_add_landform(root, "B_C_WestHighHeadland", -62.0, -154.0, -242.0, 30.0, 42.0, 20.0, 0.9, Color(0.23, 0.28, 0.30, 1.0), Color(0.21, 0.34, 0.25, 1.0))
 	_add_landform(root, "B_C_EastLowShoulder", 52.0, -180.0, -242.0, 18.0, 32.0, 8.0, 2.8, Color(0.26, 0.31, 0.31, 1.0), Color(0.25, 0.38, 0.28, 1.0))
@@ -378,20 +440,26 @@ func _add_rock_shore(parent: Node3D, node_name: String, center: Vector3, span: f
 	var root := Node3D.new()
 	root.name = node_name + "_IRREGULAR_EDGE"
 	parent.add_child(root)
-	for index in range(6):
-		var rock := MeshInstance3D.new()
-		var mesh := SphereMesh.new()
-		var radius := 1.0 + float(index % 3) * 0.42
-		mesh.radius = radius
-		mesh.height = radius * 1.2
-		mesh.radial_segments = 6
-		mesh.rings = 2
-		rock.mesh = mesh
-		var t := float(index) / 5.0
-		rock.position = center + Vector3((t - 0.5) * span, radius * 0.35, sin(phase + float(index) * 1.4) * 1.8)
-		rock.scale = Vector3(1.25, height, 0.72)
-		rock.material_override = _material(Color(0.31, 0.34, 0.33, 1.0))
-		root.add_child(rock)
+	var vertices := PackedVector3Array()
+	var indices := PackedInt32Array()
+	var segments := 11
+	for index in range(segments):
+		var t := float(index) / float(segments - 1)
+		var x := center.x + (t - 0.5) * span
+		var water_z := center.z + sin(phase + index * 1.17) * 1.15
+		var bank_z := water_z + 2.0 + 0.55 * sin(phase * 0.7 + index * 1.63)
+		var crest := center.y + height * (0.75 + 0.35 * sin(phase + index * 1.31))
+		vertices.append(Vector3(x, center.y - 0.22, water_z))
+		vertices.append(Vector3(x, crest, bank_z))
+		if index > 0:
+			var previous := (index - 1) * 2
+			var current := index * 2
+			indices.append_array(PackedInt32Array([previous, current + 1, current, previous, previous + 1, current + 1]))
+	var edge := MeshInstance3D.new()
+	edge.name = "ContinuousRockWaterContact"
+	edge.mesh = _array_mesh(vertices, indices)
+	edge.material_override = _material(Color(0.29, 0.33, 0.33, 1.0))
+	root.add_child(edge)
 
 
 func _add_path(parent: Node3D, node_name: String, from_position: Vector3, to_position: Vector3, width: float, color: Color) -> void:
@@ -544,6 +612,18 @@ func _add_quay(parent: Node3D, node_name: String, position: Vector3, size: Vecto
 	quay.material_override = _material(Color(0.29, 0.27, 0.23, 1.0))
 	parent.add_child(quay)
 
+func _add_harbor_bank(parent: Node3D, node_name: String, position: Vector3, size: Vector3) -> void:
+	# A low, dark foundation visually joins the quay, slip and terrain at the
+	# waterline. It is visual-only so the established collision corridor remains
+	# independently reversible.
+	var bank := MeshInstance3D.new()
+	bank.name = node_name + "_GROUNDED_EDGE"
+	bank.mesh = _wedge(size, size.y * 0.72, size.y)
+	bank.position = position
+	bank.rotation_degrees.y = -7.0
+	bank.material_override = _material(Color(0.24, 0.27, 0.26, 1.0))
+	parent.add_child(bank)
+
 func _add_slipway(parent: Node3D, node_name: String, position: Vector3, size: Vector3) -> void:
 	var slipway := MeshInstance3D.new()
 	slipway.name = node_name + "_PROXY"
@@ -677,14 +757,16 @@ func _capture_sequence() -> void:
 	DirAccess.make_dir_recursive_absolute(root)
 	var stages := [
 		["01_departure.png", Vector3(0.0, 0.28, START_Z)],
-		["02_open_sea_wake.png", Vector3(0.0, 0.28, -132.0), "wake_review"],
-		["03_destination_context.png", Vector3(0.0, 0.28, -142.0)],
-		["04_B_approach.png", Vector3(0.0, 0.28, -149.0)],
-		["05_entrance.png", Vector3(-4.0, 0.28, -157.0)],
-		["06_dog_leg_turn.png", Vector3(-12.0, 0.28, -168.0), "wake_review"],
-		["07_inner_harbor.png", Vector3(-12.0, 0.28, -178.0)],
-		["08_working_shore.png", Vector3(-10.0, 0.28, -187.0)],
-		["09_arrival_stop.png", Vector3(-8.0, 0.28, END_Z), "overview", true],
+		["02_departure_separation.png", Vector3(0.0, 0.28, 92.0)],
+		["03_open_sea_wake.png", Vector3(0.0, 0.28, 28.0), "wake_review"],
+		["04_mid_crossing.png", Vector3(0.0, 0.28, -42.0)],
+		["05_first_land_reveal.png", Vector3(0.0, 0.28, -112.0)],
+		["06_destination_context.png", Vector3(0.0, 0.28, -142.0)],
+		["07_B_approach.png", Vector3(0.0, 0.28, -149.0)],
+		["08_entrance.png", Vector3(-4.0, 0.28, -157.0)],
+		["09_dog_leg_turn.png", Vector3(-12.0, 0.28, -168.0), "wake_review"],
+		["10_inner_harbor.png", Vector3(-12.0, 0.28, -178.0)],
+		["11_arrival_stop.png", Vector3(-8.0, 0.28, END_Z), "overview", true],
 	]
 	var previous := Vector3(0.0, 0.28, START_Z)
 	for item in stages:
@@ -695,7 +777,7 @@ func _capture_sequence() -> void:
 			await _settle(90)
 		await _capture_image(root, String(item[0]), String(item[2]) if item.size() > 2 else "overview")
 		previous = target
-	print("TERRA_SHOWCASE_CAPTURE_COMPLETE|route=A_TO_B|stages=9|root=%s|harness=deterministic_in_engine" % root)
+	print("TERRA_SHOWCASE_CAPTURE_COMPLETE|route=A_TO_B|stages=11|root=%s|harness=deterministic_in_engine" % root)
 	get_tree().quit()
 
 

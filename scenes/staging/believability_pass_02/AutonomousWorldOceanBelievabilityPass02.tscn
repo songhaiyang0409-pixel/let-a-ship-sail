@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/staging/believability_pass_02/autonomous_world_ocean_believability_pass_02.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://scenes/reference/SailingReferenceScene.tscn" id="2_reference"]
+
+[node name="AutonomousWorldOceanBelievabilityPass02" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="CanonicalSailingReference" parent="." instance=ExtResource("2_reference")]

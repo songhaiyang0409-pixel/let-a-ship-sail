@@ -6,7 +6,7 @@ extends Node3D
 
 const VIEWPORT_SIZE := Vector2i(1152, 648)
 const CAPTURE_ROOT := "res://scenes/staging/port_b_arrival_integration_02_captures"
-const START_Z := -105.0
+const START_Z := 166.0
 const END_Z := -193.0
 const ROUTE_M := START_Z - END_Z
 const NORMAL_SPEED := 2.2
@@ -18,6 +18,13 @@ const WORLD_FRONT := 235.0
 const WORLD_BACK := -240.0
 const COTTAGE := "res://V2FUN_INBOX/working/Faroe_Turf_Roof_Cottage__V2FUN__7e3dd2ee.glb"
 const WAKE_SCRIPT := preload("res://scenes/staging/port_b_arrival_integration_02/port_b_arrival_playtest_wake.gd")
+const BOAT_VISUAL_ADAPTER := preload("res://scenes/staging/port_b_arrival_integration_02/player_boat_visual_adapter.gd")
+const NORTH_ATLANTIC := preload("res://scenes/water/regional_ocean/NorthAtlanticFaroe.tres")
+const OPEN_OCEAN := preload("res://scenes/water/regional_ocean/OpenOcean.tres")
+const SHALLOW_BAY := preload("res://scenes/water/regional_ocean/ShallowBay.tres")
+const HARBOR_CALM := preload("res://scenes/water/regional_ocean/HarborCalm.tres")
+# Tomorrow's finalized PackedScene goes here. Empty preserves today's visual.
+const PLAYER_BOAT_MODEL_SCENE := ""
 
 
 var canonical: Node3D
@@ -55,6 +62,7 @@ func _ready() -> void:
 		await get_tree().process_frame
 	_configure_viewport()
 	_configure_route()
+	_configure_player_boat_visual_adapter()
 	_hide_old_proxies()
 	_build_world()
 	_mount_v2fun_assets()
@@ -85,13 +93,17 @@ func _configure_viewport() -> void:
 
 
 func _configure_route() -> void:
+	ocean.set("presets", [NORTH_ATLANTIC, OPEN_OCEAN, SHALLOW_BAY, HARBOR_CALM])
+	ocean.set("current_zone", "North Atlantic / Faroe")
+	ocean.call("_set_all_region_uniforms")
+	print("PORT_B_WATER_ROUTE|departure=north_atlantic|interval=open_ocean|approach=shallow_bay|arrival=harbor_calm|shared_b_plus_v3=true")
 	ocean.set("route_origin_z", -START_Z)
-	ocean.set("transition_01_start", 18.0)
-	ocean.set("transition_01_end", 28.0)
-	ocean.set("transition_12_start", 40.0)
-	ocean.set("transition_12_end", 50.0)
-	ocean.set("transition_23_start", 70.0)
-	ocean.set("transition_23_end", 80.0)
+	ocean.set("transition_01_start", 45.0)
+	ocean.set("transition_01_end", 80.0)
+	ocean.set("transition_12_start", 150.0)
+	ocean.set("transition_12_end", 190.0)
+	ocean.set("transition_23_start", 270.0)
+	ocean.set("transition_23_end", 310.0)
 	ocean.set("coastal_test_mode", false)
 	var water := ocean.get("water_mesh") as MeshInstance3D
 	if water != null:
@@ -104,12 +116,23 @@ func _configure_route() -> void:
 	var material := ocean.get("water_material") as ShaderMaterial
 	if material != null:
 		for item in [
-			["route_origin_z", -START_Z], ["transition_01_start", 18.0], ["transition_01_end", 28.0],
-			["transition_12_start", 40.0], ["transition_12_end", 50.0],
-			["transition_23_start", 70.0], ["transition_23_end", 80.0],
+			["route_origin_z", -START_Z], ["transition_01_start", 45.0], ["transition_01_end", 80.0],
+			["transition_12_start", 150.0], ["transition_12_end", 190.0],
+			["transition_23_start", 270.0], ["transition_23_end", 310.0],
 		]:
 			material.set_shader_parameter(String(item[0]), item[1])
 		material.set_shader_parameter("coastal_local_enabled", false)
+
+
+func _configure_player_boat_visual_adapter() -> void:
+	var controlled_boat := ocean.get("boat_visual") as Node3D
+	if controlled_boat == null:
+		push_error("Boat visual adapter could not find the protected motion root.")
+		return
+	var adapter := BOAT_VISUAL_ADAPTER.new()
+	adapter.name = "PlayerBoatVisualAdapter"
+	add_child(adapter)
+	adapter.call("configure", controlled_boat, PLAYER_BOAT_MODEL_SCENE)
 
 
 func _build_playtest_wake() -> void:
@@ -182,6 +205,10 @@ func _build_destination_a() -> void:
 	_add_lighthouse(root, "A_ExposedLandmark", Vector3(-55.0, 13.0, 223.0))
 	_add_rocks(root, "A_WindwardRocks", Vector3(3.0, 1.0, 197.0), 4)
 	_add_collision("A_LandCollision", Vector3(112.0, 28.0, 58.0), Vector3(0.0, 12.0, 215.0))
+	# The two low shoulders frame a definite departure mouth without signage.
+	_add_landform(root, "A_WestDepartureShoulder", -47.0, 152.0, 184.0, 13.0, 19.0, 7.0, 1.2, Color(0.21, 0.26, 0.28, 1.0), Color(0.18, 0.29, 0.23, 1.0))
+	_add_landform(root, "A_EastDepartureShoulder", 48.0, 154.0, 187.0, 12.0, 18.0, 6.0, 2.8, Color(0.22, 0.27, 0.29, 1.0), Color(0.19, 0.30, 0.24, 1.0))
+	_add_rocks(root, "A_OuterDepartureMarks", Vector3(35.0, 0.7, 132.0), 3)
 
 
 func _build_destination_b() -> void:
@@ -211,6 +238,10 @@ func _build_b_offset_inlet(root: Node3D) -> void:
 	_add_collision("B_A_RightLandCollision", Vector3(48.0, 22.0, 48.0), Vector3(52.0, 10.0, -207.0))
 	_add_collision("B_A_BackLandCollision", Vector3(72.0, 28.0, 24.0), Vector3(0.0, 14.0, -232.0))
 func _build_b_dogleg_cove(root: Node3D) -> void:
+	# Sparse outer skerries announce B at long range, then funnel the eye toward
+	# the offset gap between the dominant headland and the low eastern arm.
+	_add_landform(root, "B_B_DistantWestSkerry", -64.0, -91.0, -119.0, 9.0, 13.0, 7.5, 0.3, Color(0.23, 0.28, 0.30, 1.0), Color(0.20, 0.32, 0.24, 1.0))
+	_add_landform(root, "B_B_DistantEastSkerry", 70.0, -112.0, -137.0, 7.0, 11.0, 4.5, 2.4, Color(0.25, 0.30, 0.31, 1.0), Color(0.23, 0.35, 0.26, 1.0))
 	_add_landform(root, "B_B_WestDominantHeadland", -57.0, -153.0, -224.0, 31.0, 39.0, 18.0, 0.7, Color(0.24, 0.29, 0.30, 1.0), Color(0.22, 0.35, 0.26, 1.0))
 	_add_landform(root, "B_B_EastOuterShoulder", 55.0, -190.0, -241.0, 19.0, 34.0, 11.0, 2.6, Color(0.25, 0.30, 0.31, 1.0), Color(0.25, 0.38, 0.28, 1.0))
 	_add_landform(root, "B_B_RearInhabitedSlope", 15.0, -212.0, -245.0, 15.0, 28.0, 15.0, 4.6, Color(0.26, 0.31, 0.30, 1.0), Color(0.27, 0.39, 0.25, 1.0))
@@ -682,9 +713,9 @@ func _capture_sequence() -> void:
 	DirAccess.make_dir_recursive_absolute(root)
 	var stages := [
 		["01_departure.png", Vector3(0.0, 0.28, START_Z)],
-		["02_open_sea.png", Vector3(0.0, 0.28, 70.0)],
-		["03_distant_B.png", Vector3(0.0, 0.28, 10.0)],
-		["04_approach.png", Vector3(0.0, 0.28, -105.0)],
+		["02_open_sea.png", Vector3(0.0, 0.28, 82.0)],
+		["03_distant_B.png", Vector3(0.0, 0.28, -10.0)],
+		["04_approach.png", Vector3(0.0, 0.28, -112.0)],
 		["05_entrance_discovery.png", Vector3(0.0, 0.28, -151.0)],
 		["06_dog_leg_turn.png", Vector3(-12.0, 0.28, -163.0)],
 		["07_inner_water.png", Vector3(-11.0, 0.28, -174.0)],
